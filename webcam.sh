@@ -7,7 +7,7 @@ function TakePictureFromCamera {
 	CAMERA="$1"
 	CAM_ID=${CAMERA#/dev/video}
 	CAM_DIR=~/webcam/camera${CAM_ID}
-	TIME=$(date +"%Y-%m-%d_%H%M")
+	TIME=$(date +"%Y-%m-%d_%H%M_%S")
 	DEST=${CAM_DIR}/$TIME.jpg
 	take_picture -d $CAMERA $DEST
 }
