@@ -11,6 +11,6 @@ sudo airmon-ng start (interface)
 
 cd network
 
-gcc capture.cpp -lpcap
+gcc capture.cpp -lpcap -lcurl
 
 ./a.out (interface)

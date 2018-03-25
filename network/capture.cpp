@@ -2,10 +2,15 @@
 #include <stdio.h>
 #include <iostream>
 #include <unordered_map>
-#include <string>
+#include <string.h>
 #include <ctime>
 #include <iomanip>
 #include <map>
+#include <curl/curl.h>  
+#include <cstdlib>
+
+#define server "localhost:8545"
+
 
 //a really bad frame
 // struct probeRequest
@@ -60,10 +65,46 @@ int getNodeCount(std::map<struct MacRecord,double>& macs){
   return(macs.size());
 }
 
+int htmlPost(std::string url, std::string identifier, std::map<struct MacRecord,double>& macs){
+  CURL *curl;
+  CURLcode res;
+ 
+  char* postthis = new char[identifier.length() + 1];
+
+  int i;
+  for(i = 0; i < identifier.length(); i++){
+    postthis[i] = identifier[i];
+  }
+  postthis[i] = (char)getNodeCount(macs);
+ 
+  curl = curl_easy_init();
+  if(curl) {
+    curl_easy_setopt(curl, CURLOPT_URL, url);
+    curl_easy_setopt(curl, CURLOPT_POSTFIELDS, postthis);
+ 
+    /* if we don't provide POSTFIELDSIZE, libcurl will strlen() by
+       itself */ 
+    curl_easy_setopt(curl, CURLOPT_POSTFIELDSIZE, (long)strlen(postthis));
+ 
+    /* Perform the request, res will get the return code */ 
+    res = curl_easy_perform(curl);
+    /* Check for errors */ 
+    if(res != CURLE_OK)
+      fprintf(stderr, "curl_easy_perform() failed: %s\n",
+      curl_easy_strerror(res));
+      return(1);
+ 
+    /* always cleanup */ 
+    curl_easy_cleanup(curl);
+  }
+  return(0);
+}
+
 
 int main(int argc, char *argv[])
 {
   char* dev = argv[1];
+
   printf("Device: %s \n",dev);
 
   pcap_t* handle;
@@ -137,15 +178,24 @@ int main(int argc, char *argv[])
     }
 
     retireExpiredAddresses(macs);
+
+
     //printAddressesInSystem(macs);
     //std::cout << "Node Count:" << getNodeCount(macs) << std::endl;
+
+    if(htmlPost(server,"king hall",macs)){
+      std::cout << "Error in HTTP post" << std::endl;
+    }
+    else{
+      std::cout << "HTTP post sucessful" << std::endl;
+    }
   }
 
   pcap_close(handle);
   macs.clear();
 
 
-
   return 0;
 }
 
+  
