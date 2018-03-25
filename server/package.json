@@ -1,0 +1,21 @@
+{
+  "name": "hack_iot_2018_server",
+  "version": "1.0.0",
+  "description": "we serve you here",
+  "main": "index.js",
+  "scripts": {
+    "test": "ass"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com/LionOfJewdah/Hack-IoT-2018.git"
+  },
+  "keywords": [
+    "server"
+  ],
+  "author": "David Chen and David Silverstone",
+  "license": "ISC",
+  "dependencies": {
+    "bootstrap": "^4.0.0"
+  }
+}
