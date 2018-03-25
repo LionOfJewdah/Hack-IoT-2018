@@ -8,8 +8,11 @@
 #include <map>
 #include <curl/curl.h>  
 #include <cstdlib>
+#include <fstream>
 
-#define server "localhost:8545"
+#define server "10.120.56.48:3000"
+#define FILE_NAME "/../nodes.txt"
+#define EVENT_NAME "HACKIOT:0000"
 
 
 //a really bad frame
@@ -63,6 +66,13 @@ void printAddressesInSystem(std::map<struct MacRecord,double>& macs){
 
 int getNodeCount(std::map<struct MacRecord,double>& macs){
   return(macs.size());
+}
+
+void writeToFile(std::map<struct MacRecord,double>& macs){
+  std::ofstream file;
+  file.open(FILE_NAME,std::ios::out);
+  file << EVENT_NAME << " " << getNodeCount(macs); 
+
 }
 
 int htmlPost(std::string url, std::string identifier, std::map<struct MacRecord,double>& macs){
@@ -178,12 +188,13 @@ int main(int argc, char *argv[])
     }
 
     retireExpiredAddresses(macs);
+    //writeToFile(macs);
 
 
     //printAddressesInSystem(macs);
     //std::cout << "Node Count:" << getNodeCount(macs) << std::endl;
 
-    if(htmlPost(server,"king hall",macs)){
+    if(htmlPost(server,EVENT_NAME,macs)){
       std::cout << "Error in HTTP post" << std::endl;
     }
     else{
